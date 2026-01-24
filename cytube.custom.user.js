@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         CyTube Fullscreen Video + Overlay Chat (Firefox Android Safe)
+// @name         CyTube Fullscreen Video + Overlay Chat (Firefox Android HARD FIX)
 // @namespace    http://tampermonkey.net/
-// @version      1.2
-// @description  Fullscreen video with overlay chat while allowing Firefox Android to hide the URL bar
+// @version      1.3
+// @description  Forces Firefox Android to hide URL bar using top overflow technique
 // @match        https://cytu.be/r/420Grindhouse
 // @grant        none
 // ==/UserScript==
@@ -12,11 +12,20 @@
 
     window.addEventListener('load', function () {
 
-        /* ---- FORCE REAL DOCUMENT SCROLL (CRITICAL) ---- */
-        const spacer = document.createElement('div');
-        spacer.style.height = '3vh';
-        spacer.style.pointerEvents = 'none';
-        document.body.appendChild(spacer);
+        /* ---- CREATE TOP SPACER (CRITICAL) ---- */
+        const topSpacer = document.createElement('div');
+        topSpacer.style.height = '120px';
+        topSpacer.style.width = '100%';
+        topSpacer.style.pointerEvents = 'none';
+        topSpacer.style.background = 'transparent';
+        document.body.prepend(topSpacer);
+
+        /* ---- CREATE BOTTOM SPACER (SECONDARY) ---- */
+        const bottomSpacer = document.createElement('div');
+        bottomSpacer.style.height = '120px';
+        bottomSpacer.style.width = '100%';
+        bottomSpacer.style.pointerEvents = 'none';
+        document.body.appendChild(bottomSpacer);
 
         const style = document.createElement('style');
         style.textContent = `
@@ -28,13 +37,13 @@
                 background: black !important;
             }
 
-            /* ---- VIDEO LAYOUT ---- */
+            /* ---- VIDEO ---- */
             #videowrap {
                 position: absolute !important;
-                top: 0 !important;
+                top: 120px !important; /* match spacer */
                 left: 0 !important;
                 width: 80vw !important;
-                min-height: 100vh !important;
+                min-height: calc(100vh - 120px) !important;
                 background: black !important;
                 z-index: 1 !important;
             }
@@ -42,31 +51,29 @@
             #videowrap .embed-responsive,
             #ytapiplayer {
                 width: 100% !important;
-                min-height: 100vh !important;
+                min-height: calc(100vh - 120px) !important;
                 height: auto !important;
             }
 
-            /* ---- CHAT OVERLAY ---- */
+            /* ---- CHAT ---- */
             #chatwrap {
                 position: absolute !important;
-                top: 0 !important;
+                top: 120px !important;
                 right: 0 !important;
                 width: 20vw !important;
-                min-height: 100vh !important;
+                min-height: calc(100vh - 120px) !important;
                 background: rgba(0,0,0,0.7) !important;
                 z-index: 2 !important;
             }
 
-            /* ---- ALLOW DOCUMENT SCROLL, NOT INNER LOCK ---- */
             #messagebuffer {
-                min-height: calc(100vh - 80px) !important;
                 overflow: visible !important;
                 background: transparent !important;
                 color: white !important;
                 font-size: 14px !important;
             }
 
-            /* ---- HIDE UNNECESSARY UI ---- */
+            /* ---- HIDE UI ---- */
             nav.navbar,
             #motdrow,
             #drinkbarwrap,
@@ -80,16 +87,11 @@
                 display: none !important;
             }
 
-            /* ---- CHAT INPUT ---- */
             #chatline {
                 background: rgba(255,255,255,0.1) !important;
                 color: white !important;
                 border: 1px solid rgba(255,255,255,0.3) !important;
                 width: 100% !important;
-            }
-
-            #chatline::placeholder {
-                color: rgba(255,255,255,0.7) !important;
             }
 
             #chatheader {
@@ -99,20 +101,15 @@
                 margin-bottom: 5px !important;
             }
 
-            /* ---- VIDEO CONTROLS ---- */
             .vjs-control-bar {
                 opacity: 0.85 !important;
-            }
-
-            .vjs-control-bar:hover {
-                opacity: 1 !important;
             }
         `;
         document.head.appendChild(style);
 
-        /* ---- OPTIONAL: SCROLL NUDGE (helps trigger bar collapse) ---- */
+        /* ---- FORCE INITIAL SCROLL PAST TOP ---- */
         setTimeout(() => {
-            window.scrollBy(0, 20);
-        }, 500);
+            window.scrollTo(0, 150);
+        }, 300);
     });
 })();
