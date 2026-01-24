@@ -1,109 +1,98 @@
 // ==UserScript==
-// @name         CyTube Fullscreen Video with Overlay Chat
+// @name         CyTube Fullscreen Video with Overlay Chat (Firefox Android Safe)
 // @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  Make video fullscreen and overlay chat messages over it, hide user list
-// @author       You
+// @version      1.1
+// @description  Fullscreen video with overlay chat, compatible with Firefox Android URL bar hiding
 // @match        https://cytu.be/r/420Grindhouse
 // @grant        none
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
 
-    // Wait for the page to load
-    window.addEventListener('load', function() {
-        // Inject custom CSS
+    window.addEventListener('load', function () {
+
         const style = document.createElement('style');
         style.textContent = `
-            /* Make video fullscreen */
+            html, body {
+                overflow-y: auto !important;
+                height: auto !important;
+                min-height: 100vh !important;
+                margin: 0 !important;
+            }
+
+            /* Video container */
             #videowrap {
-                position: fixed !important;
+                position: absolute !important;
                 top: 0 !important;
                 left: 0 !important;
                 width: 80vw !important;
-                height: 100vh !important;
-                z-index: 9999 !important;
+                min-height: 100vh !important;
                 background: black !important;
+                z-index: 1 !important;
             }
 
-            #videowrap .embed-responsive {
-                height: 100vh !important;
-                width: 800vw !important;
-            }
-
+            #videowrap .embed-responsive,
             #ytapiplayer {
-                height: 100vh !important;
-                width: 80vw !important;
+                width: 100% !important;
+                min-height: 100vh !important;
+                height: auto !important;
             }
 
-            /* Hide navbar and other elements */
-            nav.navbar {
-                display: none !important;
-            }
-
-            #motdrow, #drinkbarwrap, #announcements, #playlistrow, #controlsrow, #resizewrap, footer {
-                display: none !important;
-            }
-
-            /* Overlay chat over video */
+            /* Overlay chat */
             #chatwrap {
-                position: fixed !important;
-                top: 0px !important;
-                right: 0px !important;
+                position: absolute !important;
+                top: 0 !important;
+                right: 0 !important;
                 width: 20vw !important;
-                height: 100vh !important;
-                z-index: 10000 !important;
+                min-height: 100vh !important;
                 background: rgba(0, 0, 0, 0.7) !important;
-                overflow: hidden !important;
+                z-index: 2 !important;
             }
 
-            /* Hide user list */
-            #userlist {
-                display: none !important;
-            }
-
-            /* Style chat messages */
+            /* Allow document scrolling instead of inner-only scroll */
             #messagebuffer {
-                height: calc(100% - 80px) !important;
+                min-height: calc(100vh - 80px) !important;
+                overflow: visible !important;
                 background: transparent !important;
                 color: white !important;
                 font-size: 14px !important;
-                overflow-y: auto !important;
             }
 
-            #messagebuffer .chat-msg {
-                color: white !important;
-            }
-
-            /* Style chat input */
-            #chatline {
-                background: rgba(255, 255, 255, 0.1) !important;
-                color: white !important;
-                border: 1px solid rgba(255, 255, 255, 0.3) !important;
-                width: 100% !important;
-            }
-
-            #chatline::placeholder {
-                color: rgba(255, 255, 255, 0.7) !important;
-            }
-
-            /* Hide chat header toggle */
+            /* Hide UI clutter */
+            nav.navbar,
+            #motdrow,
+            #drinkbarwrap,
+            #announcements,
+            #playlistrow,
+            #controlsrow,
+            #resizewrap,
+            footer,
+            #userlist,
             #userlisttoggle {
                 display: none !important;
             }
 
-            /* Adjust chat header */
+            #chatline {
+                background: rgba(255,255,255,0.1) !important;
+                color: white !important;
+                border: 1px solid rgba(255,255,255,0.3) !important;
+                width: 100% !important;
+            }
+
+            #chatline::placeholder {
+                color: rgba(255,255,255,0.7) !important;
+            }
+
             #chatheader {
-                background: rgba(0, 0, 0, 0.5) !important;
+                background: rgba(0,0,0,0.5) !important;
                 color: white !important;
                 border: none !important;
                 margin-bottom: 5px !important;
             }
 
-            /* Make sure video controls are visible */
             .vjs-control-bar {
-                opacity: 0.8 !important;
+                opacity: 0.85 !important;
             }
 
             .vjs-control-bar:hover {
@@ -111,16 +100,5 @@
             }
         `;
         document.head.appendChild(style);
-
-        // Function to make video fullscreen
-        function makeFullscreen() {
-            const videoPlayer = document.getElementById('ytapiplayer');
-            if (videoPlayer && videoPlayer.requestFullscreen) {
-                videoPlayer.requestFullscreen();
-            }
-        }
-
-        // Try to make fullscreen after a short delay
-        setTimeout(makeFullscreen, 2000);
     });
 })();
