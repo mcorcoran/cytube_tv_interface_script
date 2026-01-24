@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         CyTube Fullscreen Video with Overlay Chat (Firefox Android Safe)
+// @name         CyTube Fullscreen Video + Overlay Chat (Firefox Android Safe)
 // @namespace    http://tampermonkey.net/
-// @version      1.1
-// @description  Fullscreen video with overlay chat, compatible with Firefox Android URL bar hiding
+// @version      1.2
+// @description  Fullscreen video with overlay chat while allowing Firefox Android to hide the URL bar
 // @match        https://cytu.be/r/420Grindhouse
 // @grant        none
 // ==/UserScript==
@@ -12,16 +12,23 @@
 
     window.addEventListener('load', function () {
 
+        /* ---- FORCE REAL DOCUMENT SCROLL (CRITICAL) ---- */
+        const spacer = document.createElement('div');
+        spacer.style.height = '3vh';
+        spacer.style.pointerEvents = 'none';
+        document.body.appendChild(spacer);
+
         const style = document.createElement('style');
         style.textContent = `
             html, body {
-                overflow-y: auto !important;
-                height: auto !important;
-                min-height: 100vh !important;
                 margin: 0 !important;
+                padding: 0 !important;
+                min-height: 100vh !important;
+                overflow-y: auto !important;
+                background: black !important;
             }
 
-            /* Video container */
+            /* ---- VIDEO LAYOUT ---- */
             #videowrap {
                 position: absolute !important;
                 top: 0 !important;
@@ -39,18 +46,18 @@
                 height: auto !important;
             }
 
-            /* Overlay chat */
+            /* ---- CHAT OVERLAY ---- */
             #chatwrap {
                 position: absolute !important;
                 top: 0 !important;
                 right: 0 !important;
                 width: 20vw !important;
                 min-height: 100vh !important;
-                background: rgba(0, 0, 0, 0.7) !important;
+                background: rgba(0,0,0,0.7) !important;
                 z-index: 2 !important;
             }
 
-            /* Allow document scrolling instead of inner-only scroll */
+            /* ---- ALLOW DOCUMENT SCROLL, NOT INNER LOCK ---- */
             #messagebuffer {
                 min-height: calc(100vh - 80px) !important;
                 overflow: visible !important;
@@ -59,7 +66,7 @@
                 font-size: 14px !important;
             }
 
-            /* Hide UI clutter */
+            /* ---- HIDE UNNECESSARY UI ---- */
             nav.navbar,
             #motdrow,
             #drinkbarwrap,
@@ -73,6 +80,7 @@
                 display: none !important;
             }
 
+            /* ---- CHAT INPUT ---- */
             #chatline {
                 background: rgba(255,255,255,0.1) !important;
                 color: white !important;
@@ -91,6 +99,7 @@
                 margin-bottom: 5px !important;
             }
 
+            /* ---- VIDEO CONTROLS ---- */
             .vjs-control-bar {
                 opacity: 0.85 !important;
             }
@@ -100,5 +109,10 @@
             }
         `;
         document.head.appendChild(style);
+
+        /* ---- OPTIONAL: SCROLL NUDGE (helps trigger bar collapse) ---- */
+        setTimeout(() => {
+            window.scrollBy(0, 20);
+        }, 500);
     });
 })();
