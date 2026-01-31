@@ -29,7 +29,7 @@
 
             #videowrap .embed-responsive {
                 height: 100vh !important;
-                width: 800vw !important;
+                width: 80vw !important;
             }
 
             #ytapiplayer {
@@ -42,7 +42,7 @@
                 display: none !important;
             }
 
-            #motdrow, #drinkbarwrap, #announcements, #playlistrow, #controlsrow, #resizewrap, footer {
+            #motdrow, #drinkbarwrap, #announcements, #playlistrow,  #resizewrap, footer {
                 display: none !important;
             }
 
@@ -55,9 +55,25 @@
                 height: 100vh !important;
                 z-index: 10000 !important;
                 background: rgba(0, 0, 0, 0.7) !important;
-                overflow: hidden !important;
+                overflow: visible !important;
             }
 
+            .modal,
+            .popover,
+            .dropdown-menu {
+                z-index: 20001 !important;
+            }
+            #controlsrow {
+                height: 0 !important;
+                overflow: hidden !important;
+            }
+            #emotelistbtn {
+                position: fixed !important;
+                bottom: 5px !important;
+                right: 20vw !important;
+                z-index: 20002 !important;
+                font-size: 20px !important;
+            }
             /* Hide user list */
             #userlist {
                 display: none !important;
@@ -120,7 +136,5 @@
             }
         }
 
-        // Try to make fullscreen after a short delay
-        setTimeout(makeFullscreen, 2000);
     });
 })();
