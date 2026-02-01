@@ -29,7 +29,7 @@
 
             #videowrap .embed-responsive {
                 height: 100vh !important;
-                width: 800vw !important;
+                width: 80vw !important;
             }
 
             #ytapiplayer {
@@ -120,7 +120,5 @@
             }
         }
 
-        // Try to make fullscreen after a short delay
-        setTimeout(makeFullscreen, 2000);
     });
 })();
