@@ -20,6 +20,20 @@
         }
     };
 
+    function toggleFullscreen() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else {
+            document.documentElement.requestFullscreen().catch(() => {});
+        }
+    }
+    document.addEventListener("keydown", (e) => {
+        // F11 or Ctrl+Alt+F
+        if (e.key === "F11" || (e.ctrlKey && e.altKey && e.key === "f")) {
+            e.preventDefault();
+            toggleFullscreen();
+        }
+    });    
     const waitForBody = () => {
         if (!document.body) {
             requestAnimationFrame(waitForBody);
@@ -38,6 +52,7 @@
     };
 
     waitForBody();
+
 
     /* ---------- CSS / LAYOUT ---------- */
 
