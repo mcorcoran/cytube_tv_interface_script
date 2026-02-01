@@ -81,11 +81,18 @@
                 z-index: 10000 !important;
                 background: rgba(0,0,0,0.7) !important;
             }
-
+                
+            /* Style chat messages */
             #messagebuffer {
                 height: calc(100% - 80px) !important;
-                color: white !important;
                 background: transparent !important;
+                color: white !important;
+                font-size: 14px !important;
+                overflow-y: auto !important;
+            }
+
+            #messagebuffer .chat-msg {
+                color: white !important;
             }
 
             #chatline {
