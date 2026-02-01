@@ -18,31 +18,34 @@
         if (chatinput && chatinput.getAttribute("inputmode") !== "none") {
             chatinput.setAttribute("inputmode", "none");
         }
-        //Not working
-        const emoteinput = document.getElementsByClassName("emotelist-search");
-        if (emoteinput && emoteinput.getAttribute("inputmode") !== "none") {
-            emoteinput.setAttribute("inputmode", "none");
+
+        const emoteInputs = document.getElementsByClassName("emotelist-search");
+
+        for (const input of emoteInputs) {
+            if (input.getAttribute("inputmode") !== "none") {
+                input.setAttribute("inputmode", "none");
+            }
         }
     };
 
     //TODO add button next to emote button to toggle fullscreen
 
         /* ---------- Full Screen ---------- */
-    const addFullscreenOverlay = () => {
-        const fsOverlay = document.createElement("div");
-        fsOverlay.style.position = "fixed";
-        fsOverlay.style.inset = "0";
-        fsOverlay.style.zIndex = "999999";
-        fsOverlay.style.cursor = "pointer";
-        fsOverlay.style.background = "transparent";
+    // const addFullscreenOverlay = () => {
+    //     const fsOverlay = document.createElement("div");
+    //     fsOverlay.style.position = "fixed";
+    //     fsOverlay.style.inset = "0";
+    //     fsOverlay.style.zIndex = "999999";
+    //     fsOverlay.style.cursor = "pointer";
+    //     fsOverlay.style.background = "transparent";
 
-        fsOverlay.addEventListener("click", () => {
-            document.documentElement.requestFullscreen().catch(() => {});
-            fsOverlay.remove();
-        }, { once: true });
+    //     fsOverlay.addEventListener("click", () => {
+    //         document.documentElement.requestFullscreen().catch(() => {});
+    //         fsOverlay.remove();
+    //     }, { once: true });
 
-        document.body.appendChild(fsOverlay);
-    };
+    //     document.body.appendChild(fsOverlay);
+    // };
 
     function toggleFullscreen() {
         if (document.fullscreenElement) {
@@ -194,6 +197,9 @@
             #fs-toggle-btn:focus {
                 outline: 2px solid white !important;
             }            
+            .video-js {
+                bottom: 20px !important;
+            }
         `;
         document.head.appendChild(style);
     });
