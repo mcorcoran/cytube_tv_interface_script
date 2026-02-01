@@ -18,11 +18,14 @@
         if (chatinput && chatinput.getAttribute("inputmode") !== "none") {
             chatinput.setAttribute("inputmode", "none");
         }
+        //Not working
         const emoteinput = document.getElementsByClassName("emotelist-search");
         if (emoteinput && emoteinput.getAttribute("inputmode") !== "none") {
             emoteinput.setAttribute("inputmode", "none");
         }
     };
+
+    //TODO add button next to emote button to toggle fullscreen
 
         /* ---------- Full Screen ---------- */
     const addFullscreenOverlay = () => {
@@ -41,6 +44,33 @@
         document.body.appendChild(fsOverlay);
     };
 
+    function toggleFullscreen() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        } else {
+            document.documentElement.requestFullscreen().catch(() => {});
+        }
+    }
+    const addFullscreenButton = () => {
+        const emoteBtn = document.getElementById("emotelistbtn");
+        if (!emoteBtn) return;
+
+        // Avoid duplicates
+        if (document.getElementById("fs-toggle-btn")) return;
+
+        const fsBtn = document.createElement("button");
+        fsBtn.id = "fs-toggle-btn";
+        fsBtn.textContent = "⛶"; // fullscreen icon
+        fsBtn.title = "Toggle Fullscreen";
+
+        fsBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleFullscreen();
+        });
+
+        emoteBtn.parentElement.appendChild(fsBtn);
+    };
+
     const waitForBody = () => {
         if (!document.body) {
             requestAnimationFrame(waitForBody);
@@ -48,13 +78,17 @@
         }
 
         // Add fullscreen overlay AFTER body exists
-        addFullscreenOverlay();
+        addFullscreenButton();
+        //addFullscreenOverlay();
 
         // Apply immediately
         applyInputMode();
 
         // Observe DOM changes (CyTube recreates chatline)
-        const observer = new MutationObserver(applyInputMode);
+        const observer = new MutationObserver(() => {
+            applyInputMode();
+            addFullscreenButton();
+        });
         observer.observe(document.body, {
             childList: true,
             subtree: true
@@ -141,6 +175,25 @@
                 right: 20vw !important;
                 z-index: 20002 !important;
             }
+
+            #fs-toggle-btn {
+                position: fixed !important;
+                bottom: 5px !important;
+                right: calc(20vw + 45px) !important; /* next to emote button */
+                z-index: 20002 !important;
+
+                background: rgba(0,0,0,0.7) !important;
+                color: white !important;
+                border: 1px solid rgba(255,255,255,0.3) !important;
+                border-radius: 4px !important;
+                padding: 6px 10px !important;
+                font-size: 16px !important;
+                cursor: pointer !important;
+            }
+
+            #fs-toggle-btn:focus {
+                outline: 2px solid white !important;
+            }            
         `;
         document.head.appendChild(style);
     });
