@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         CyTube Fullscreen Video with Overlay Chat (TV-friendly)
+// @name         CyTube Fullscreen Video with Overlay Chat
 // @namespace    http://tampermonkey.net/
-// @version      1.2
-// @description  Fullscreen video + overlay chat, hide user list, contain messages and GIFs on Android TV
+// @version      1.1
+// @description  Make video fullscreen and overlay chat messages over it, hide user list
 // @match        https://cytu.be/r/420Grindhouse
 // @grant        none
 // @run-at       document-start
@@ -12,6 +12,7 @@
     'use strict';
 
     /* ---------- INPUTMODE SUPPRESSION ---------- */
+
     const applyInputMode = () => {
         const input = document.getElementById("chatline");
         if (input && input.getAttribute("inputmode") !== "none") {
@@ -39,10 +40,10 @@
     waitForBody();
 
     /* ---------- CSS / LAYOUT ---------- */
+
     window.addEventListener('load', () => {
         const style = document.createElement('style');
         style.textContent = `
-            /* ---------- Video / layout ---------- */
             #videowrap {
                 position: fixed !important;
                 top: 0 !important;
@@ -59,7 +60,6 @@
                 height: 100vh !important;
             }
 
-            /* Hide nav and other elements */
             nav.navbar,
             #motdrow,
             #drinkbarwrap,
@@ -72,71 +72,36 @@
                 display: none !important;
             }
 
-            /* chatwrap: vertical column layout */
+            /* Overlay chat over video */
             #chatwrap {
-                display: flex !important;
-                flex-direction: column !important;
+                position: fixed !important;
+                top: 0px !important;
+                right: 0px !important;
                 width: 20vw !important;
-                max-width: 20vw !important;
                 height: 100vh !important;
+                z-index: 10000 !important;
+                background: rgba(0, 0, 0, 0.7) !important;
                 overflow: hidden !important;
-                box-sizing: border-box !important;
-                padding: 4px 8px !important;
             }
 
-            /* messagebuffer becomes flex item that scrolls */
+            /* Style chat messages */
             #messagebuffer {
-                flex: 1 1 auto !important;
-                min-height: 0 !important; /* critical for flex scroll */
+                height: calc(100% - 80px) !important;
+                background: transparent !important;
+                color: white !important;
+                font-size: 14px !important;
                 overflow-y: auto !important;
-                overflow-x: hidden !important;
-                width: 100% !important;
-                box-sizing: border-box !important;
-                word-break: break-word !important;
             }
 
-            /* ensure text wraps */
-            #messagebuffer .chat-msg,
-            #messagebuffer .chat-msg span,
-            #messagebuffer .chat-msg div {
-                white-space: normal !important;
-                word-wrap: break-word !important;
-                overflow-wrap: break-word !important;
-            }
-
-            /* contain images/videos */
-            #messagebuffer img,
-            #messagebuffer video {
-                max-width: 100% !important;
-                max-height: 160px !important; /* reduce huge media */
-                object-fit: contain !important;
-                display: block !important;
-                margin: 2px 0 !important;
-            }
-
-            /* input stays pinned at bottom */
             #chatline {
-                flex-shrink: 0 !important;
+                background: rgba(255,255,255,0.1) !important;
+                color: white !important;
+                border: 1px solid rgba(255,255,255,0.3) !important;
                 width: 100% !important;
-                box-sizing: border-box !important;
-                margin-top: 4px !important;
             }
 
             #chatline::placeholder {
                 color: rgba(255,255,255,0.7) !important;
-            }
-
-            /* Other UI tweaks */
-            #controlsrow {
-                height: 0 !important;
-                overflow: hidden !important;
-            }
-
-            #emotelistbtn {
-                position: fixed !important;
-                bottom: 5px !important;
-                right: 20vw !important;
-                z-index: 20002 !important;
             }
 
             .modal,
@@ -145,19 +110,11 @@
                 z-index: 20001 !important;
             }
 
-            #chatheader {
-                background: rgba(0,0,0,0.5) !important;
-                color: white !important;
-                border: none !important;
-                margin-bottom: 5px !important;
-            }
-
-            .vjs-control-bar {
-                opacity: 0.8 !important;
-            }
-
-            .vjs-control-bar:hover {
-                opacity: 1 !important;
+            #emotelistbtn {
+                position: fixed !important;
+                bottom: 5px !important;
+                right: 20vw !important;
+                z-index: 20002 !important;
             }
         `;
         document.head.appendChild(style);
