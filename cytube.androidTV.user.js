@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CyTube Fullscreen Video with Overlay Chat
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Make video fullscreen and overlay chat messages over it, hide user list
 // @match        https://cytu.be/r/420Grindhouse
 // @grant        none
@@ -20,7 +20,6 @@
         }
 
         const emoteInputs = document.getElementsByClassName("emotelist-search");
-
         for (const input of emoteInputs) {
             if (input.getAttribute("inputmode") !== "none") {
                 input.setAttribute("inputmode", "none");
@@ -28,24 +27,7 @@
         }
     };
 
-    //TODO add button next to emote button to toggle fullscreen
-
-        /* ---------- Full Screen ---------- */
-    // const addFullscreenOverlay = () => {
-    //     const fsOverlay = document.createElement("div");
-    //     fsOverlay.style.position = "fixed";
-    //     fsOverlay.style.inset = "0";
-    //     fsOverlay.style.zIndex = "999999";
-    //     fsOverlay.style.cursor = "pointer";
-    //     fsOverlay.style.background = "transparent";
-
-    //     fsOverlay.addEventListener("click", () => {
-    //         document.documentElement.requestFullscreen().catch(() => {});
-    //         fsOverlay.remove();
-    //     }, { once: true });
-
-    //     document.body.appendChild(fsOverlay);
-    // };
+    /* ---------- FULLSCREEN ---------- */
 
     function toggleFullscreen() {
         if (document.fullscreenElement) {
@@ -54,16 +36,25 @@
             document.documentElement.requestFullscreen().catch(() => {});
         }
     }
+
+    const updateFullscreenButtonVisibility = () => {
+        const fsBtn = document.getElementById("fs-toggle-btn");
+        if (!fsBtn) return;
+
+        fsBtn.style.display = document.fullscreenElement ? "none" : "";
+    };
+
+    document.addEventListener("fullscreenchange", updateFullscreenButtonVisibility);
+
     const addFullscreenButton = () => {
         const emoteBtn = document.getElementById("emotelistbtn");
         if (!emoteBtn) return;
 
-        // Avoid duplicates
         if (document.getElementById("fs-toggle-btn")) return;
 
         const fsBtn = document.createElement("button");
         fsBtn.id = "fs-toggle-btn";
-        fsBtn.textContent = "⛶"; // fullscreen icon
+        fsBtn.textContent = "⛶";
         fsBtn.title = "Toggle Fullscreen";
 
         fsBtn.addEventListener("click", (e) => {
@@ -72,7 +63,10 @@
         });
 
         emoteBtn.parentElement.appendChild(fsBtn);
+        updateFullscreenButtonVisibility();
     };
+
+    /* ---------- DOM READY / OBSERVERS ---------- */
 
     const waitForBody = () => {
         if (!document.body) {
@@ -80,18 +74,14 @@
             return;
         }
 
-        // Add fullscreen overlay AFTER body exists
-        addFullscreenButton();
-        //addFullscreenOverlay();
-
-        // Apply immediately
         applyInputMode();
+        addFullscreenButton();
 
-        // Observe DOM changes (CyTube recreates chatline)
         const observer = new MutationObserver(() => {
             applyInputMode();
             addFullscreenButton();
         });
+
         observer.observe(document.body, {
             childList: true,
             subtree: true
@@ -99,7 +89,6 @@
     };
 
     waitForBody();
-
 
     /* ---------- CSS / LAYOUT ---------- */
 
@@ -130,23 +119,24 @@
             #resizewrap,
             footer,
             #userlist,
-            #userlisttoggle {
+            #userlisttoggle,
+            .modal-header,
+            #videocontrols,
+            .modal-footer {
                 display: none !important;
             }
 
-            /* Overlay chat over video */
             #chatwrap {
                 position: fixed !important;
-                top: 0px !important;
-                right: 0px !important;
+                top: 0 !important;
+                right: 0 !important;
                 width: 20vw !important;
                 height: 100vh !important;
                 z-index: 9999 !important;
-                background: rgba(0, 0, 0, 0.7) !important;
+                background: rgba(0,0,0,0.7) !important;
                 overflow: hidden !important;
             }
 
-            /* Style chat messages */
             #messagebuffer {
                 height: calc(100% - 80px) !important;
                 background: transparent !important;
@@ -177,31 +167,54 @@
                 bottom: 5px !important;
                 right: 20vw !important;
                 z-index: 20002 !important;
+                background: rgba(0,0,0,0.7) !important;
+                color: white !important;
+                border: 1px solid rgba(255,255,255,0.3) !important;
             }
 
             #fs-toggle-btn {
                 position: fixed !important;
                 bottom: 5px !important;
-                right: calc(20vw + 100px) !important; /* next to emote button */
+                right: calc(20vw + 100px) !important;
                 z-index: 20002 !important;
-
                 background: rgba(0,0,0,0.7) !important;
                 color: white !important;
                 border: 1px solid rgba(255,255,255,0.3) !important;
                 border-radius: 4px !important;
-                padding: 6px 10px !important;
+                padding: 3px 10px !important;
                 font-size: 16px !important;
                 cursor: pointer !important;
             }
 
             #fs-toggle-btn:focus {
                 outline: 2px solid white !important;
-            }            
+            }
+
             .video-js .vjs-control-bar {
                 bottom: 20px !important;
-                width:80% !important;
+                width: 80% !important;
+            }
+
+            #videowrap-header {
+                border: 0 !important;
+                opacity: 0.5 !important;
+            }
+
+            #resize-video-smaller,
+            #resize-video-larger {
+                display: none !important;
+            }
+
+            .modal-dialog {
+                margin: 0 auto !important;
+            }
+
+            body {
+                background-image: none !important;
+                background: #000 !important; /* or transparent */
             }
         `;
         document.head.appendChild(style);
     });
+
 })();
