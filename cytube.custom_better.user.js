@@ -182,7 +182,7 @@
             #fs-toggle-btn {
                 position: fixed !important;
                 bottom: 5px !important;
-                right: calc(20vw + 45px) !important; /* next to emote button */
+                right: calc(20vw + 100px) !important; /* next to emote button */
                 z-index: 20002 !important;
 
                 background: rgba(0,0,0,0.7) !important;
@@ -199,6 +199,7 @@
             }            
             .video-js {
                 bottom: 20px !important;
+                width:80% !important;
             }
         `;
         document.head.appendChild(style);
