@@ -72,56 +72,54 @@
                 display: none !important;
             }
 
-            /* ---------- Chat overlay ---------- */
+            /* chatwrap: vertical column layout */
             #chatwrap {
-                position: fixed !important;
-                top: 0 !important;
-                right: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
                 width: 20vw !important;
+                max-width: 20vw !important;
                 height: 100vh !important;
-                z-index: 10000 !important;
-                background: rgba(0,0,0,0.7) !important;
-                overflow: hidden !important; /* contain children */
+                overflow: hidden !important;
                 box-sizing: border-box !important;
-                padding: 5px !important;
+                padding: 4px 8px !important;
             }
 
+            /* messagebuffer becomes flex item that scrolls */
             #messagebuffer {
-                height: calc(100% - 80px) !important;
-                width: 100% !important;
+                flex: 1 1 auto !important;
+                min-height: 0 !important; /* critical for flex scroll */
                 overflow-y: auto !important;
                 overflow-x: hidden !important;
-                color: white !important;
-                background: transparent !important;
-                font-size: 14px !important;
+                width: 100% !important;
                 box-sizing: border-box !important;
-                word-wrap: break-word !important;
+                word-break: break-word !important;
             }
 
-            #messagebuffer .chat-msg {
+            /* ensure text wraps */
+            #messagebuffer .chat-msg,
+            #messagebuffer .chat-msg span,
+            #messagebuffer .chat-msg div {
                 white-space: normal !important;
-                word-break: break-word !important;
+                word-wrap: break-word !important;
                 overflow-wrap: break-word !important;
             }
 
-            /* Contain images/GIFs in chat */
+            /* contain images/videos */
             #messagebuffer img,
             #messagebuffer video {
                 max-width: 100% !important;
-                max-height: 200px !important;  /* adjust if you want taller GIFs */
-                height: auto !important;
-                display: block !important;
+                max-height: 160px !important; /* reduce huge media */
                 object-fit: contain !important;
-                margin-bottom: 2px !important;
+                display: block !important;
+                margin: 2px 0 !important;
             }
 
-            /* ---------- Chat input ---------- */
+            /* input stays pinned at bottom */
             #chatline {
-                background: rgba(255,255,255,0.1) !important;
-                color: white !important;
-                border: 1px solid rgba(255,255,255,0.3) !important;
+                flex-shrink: 0 !important;
                 width: 100% !important;
                 box-sizing: border-box !important;
+                margin-top: 4px !important;
             }
 
             #chatline::placeholder {
