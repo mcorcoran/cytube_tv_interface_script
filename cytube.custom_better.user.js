@@ -14,9 +14,13 @@
     /* ---------- INPUTMODE SUPPRESSION ---------- */
 
     const applyInputMode = () => {
-        const input = document.getElementById("chatline");
-        if (input && input.getAttribute("inputmode") !== "none") {
-            input.setAttribute("inputmode", "none");
+        const chatinput = document.getElementById("chatline");
+        if (chatinput && chatinput.getAttribute("inputmode") !== "none") {
+            chatinput.setAttribute("inputmode", "none");
+        }
+        const emoteinput = document.getElementsByClassName("emotelist-search");
+        if (emoteinput && emoteinput.getAttribute("inputmode") !== "none") {
+            emoteinput.setAttribute("inputmode", "none");
         }
     };
 
@@ -45,7 +49,7 @@
 
         // Add fullscreen overlay AFTER body exists
         addFullscreenOverlay();
-        
+
         // Apply immediately
         applyInputMode();
 
