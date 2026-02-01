@@ -197,7 +197,7 @@
             #fs-toggle-btn:focus {
                 outline: 2px solid white !important;
             }            
-            .video-js {
+            .video-js .vjs-control-bar {
                 bottom: 20px !important;
                 width:80% !important;
             }
