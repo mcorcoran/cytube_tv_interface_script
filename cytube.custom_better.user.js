@@ -20,20 +20,19 @@
         }
     };
 
-    function toggleFullscreen() {
-        if (document.fullscreenElement) {
-            document.exitFullscreen();
-        } else {
-            document.documentElement.requestFullscreen().catch(() => {});
-        }
-    }
-    document.addEventListener("keydown", (e) => {
-        // F11 or Ctrl+Alt+F
-        if (e.key === "F11" || (e.ctrlKey && e.altKey && e.key === "f")) {
-            e.preventDefault();
-            toggleFullscreen();
-        }
-    });    
+    const fsOverlay = document.createElement("div");
+    fsOverlay.style.position = "fixed";
+    fsOverlay.style.inset = "0";
+    fsOverlay.style.zIndex = "999999";
+    fsOverlay.style.cursor = "pointer";
+
+    fsOverlay.addEventListener("click", () => {
+        document.documentElement.requestFullscreen().catch(() => {});
+        fsOverlay.remove();
+    });
+
+    document.body.appendChild(fsOverlay);  
+
     const waitForBody = () => {
         if (!document.body) {
             requestAnimationFrame(waitForBody);
