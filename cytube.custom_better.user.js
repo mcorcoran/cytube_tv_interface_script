@@ -79,7 +79,7 @@
                 right: 0px !important;
                 width: 20vw !important;
                 height: 100vh !important;
-                z-index: 10000 !important;
+                z-index: 9999 !important;
                 background: rgba(0, 0, 0, 0.7) !important;
                 overflow: hidden !important;
             }
