@@ -31,9 +31,9 @@
 
     function toggleFullscreen() {
         if (document.fullscreenElement) {
-            document.exitFullscreen().catch(() => {});
+            document.exitFullscreen().catch(() => { });
         } else {
-            document.documentElement.requestFullscreen().catch(() => {});
+            document.documentElement.requestFullscreen().catch(() => { });
         }
     }
 
@@ -65,6 +65,44 @@
         emoteBtn.parentElement.appendChild(fsBtn);
         updateFullscreenButtonVisibility();
     };
+
+    /* ---------- Pause when not in focus ---------- */
+    const pauseAllVideos = () => {
+        document.querySelectorAll('video').forEach(v => {
+            try {
+                if (!v.paused) {
+                    v.pause();
+                    v.src = '';
+                }
+            } catch { }
+        });
+    };
+
+    const addReloadButton = () => {
+        const emoteBtn = document.getElementById("emotelistbtn");
+        if (!emoteBtn) return;
+
+        if (document.getElementById("reload-video-btn")) return;
+
+        const btn = document.createElement("button");
+        btn.id = "reload-video-btn";
+        btn.textContent = "↻";
+        btn.title = "Reload Video";
+
+        btn.addEventListener("click", e => {
+            e.stopPropagation();
+            location.reload();
+        });
+
+        emoteBtn.parentElement.appendChild(btn);
+    };
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            pauseAllVideos();
+            addReloadButton();
+        }
+    });
 
     /* ---------- DOM READY / OBSERVERS ---------- */
 
@@ -121,7 +159,6 @@
             #userlist,
             #userlisttoggle,
             .modal-header,
-            #videocontrols,
             .modal-footer {
                 display: none !important;
             }
@@ -212,6 +249,20 @@
             body {
                 background-image: none !important;
                 background: #000 !important; /* or transparent */
+            }
+            #reload-video-btn {
+                position: fixed !important;
+                bottom: 5px !important;
+                right: calc(20vw + 150px) !important;
+
+                z-index: 20002 !important;
+                background: rgba(0,0,0,0.7) !important;
+                color: white !important;
+                border: 1px solid rgba(255,255,255,0.3) !important;
+                border-radius: 4px !important;
+                padding: 3px 10px !important;
+                font-size: 16px !important;
+                cursor: pointer !important;
             }
         `;
         document.head.appendChild(style);
