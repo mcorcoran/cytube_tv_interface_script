@@ -158,6 +158,7 @@
             footer,
             #userlist,
             #userlisttoggle,
+            #rightcontrols,
             .modal-header,
             .modal-footer {
                 display: none !important;
