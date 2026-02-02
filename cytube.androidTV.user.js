@@ -104,6 +104,20 @@
         }
     });
 
+    /* Reaction Cleanup */
+    const applyEmotePickerIcon = () => {
+        const btn = document.getElementById("emotelistbtn");
+        if (!btn) return;
+
+        // Prevent reapplying if CyTube rebuilds DOM
+        if (btn.dataset.pickerApplied) return;
+
+        btn.textContent = "▦";
+        btn.title = "Emotes";
+        btn.setAttribute("aria-label", "Emote Picker");
+
+        btn.dataset.pickerApplied = "true";
+    };    
     /* ---------- DOM READY / OBSERVERS ---------- */
 
     const waitForBody = () => {
@@ -114,10 +128,12 @@
 
         applyInputMode();
         addFullscreenButton();
-
+        applyEmotePickerIcon();
+        
         const observer = new MutationObserver(() => {
             applyInputMode();
             addFullscreenButton();
+            applyEmotePickerIcon();
         });
 
         observer.observe(document.body, {
@@ -213,7 +229,7 @@
             #fs-toggle-btn {
                 position: fixed !important;
                 bottom: 5px !important;
-                right: calc(20vw + 100px) !important;
+                right: calc(20vw + 50px) !important;
                 z-index: 20002 !important;
                 background: rgba(0,0,0,0.7) !important;
                 color: white !important;
