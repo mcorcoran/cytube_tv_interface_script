@@ -129,7 +129,7 @@
         applyInputMode();
         addFullscreenButton();
         applyEmotePickerIcon();
-        
+
         const observer = new MutationObserver(() => {
             applyInputMode();
             addFullscreenButton();
@@ -189,10 +189,11 @@
                 z-index: 9999 !important;
                 background: rgba(0,0,0,0.7) !important;
                 overflow: hidden !important;
+                padding-right: 5px !important;
             }
 
             #messagebuffer {
-                height: calc(100% - 80px) !important;
+                height: calc(100% - 60px) !important;
                 background: transparent !important;
                 color: white !important;
                 font-size: 14px !important;
