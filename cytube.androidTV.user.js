@@ -176,6 +176,7 @@
             #userlisttoggle,
             #rightcontrols,
             .modal-header,
+            .timestamp,
             .modal-footer {
                 display: none !important;
             }
