@@ -117,7 +117,68 @@
         btn.setAttribute("aria-label", "Emote Picker");
 
         btn.dataset.pickerApplied = "true";
-    };    
+    };
+    // ---- USER COLOR SYSTEM ----
+
+    // Simple deterministic hash
+    function hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            hash |= 0; // Convert to 32bit int
+        }
+        return Math.abs(hash);
+    }
+
+    // Convert username to bright HSL color
+    function usernameToColor(username) {
+        const hash = hashString(username);
+
+        const hue = hash % 360;                  // 0–359
+        const saturation = 75 + (hash % 15);     // 75–90%
+        const lightness = 60 + (hash % 10);      // 60–70%
+
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    }
+
+    // Keep track of which users we’ve styled
+    const styledUsers = new Set();
+
+    function applyUserColors() {
+        const userElements = document.querySelectorAll('#messagebuffer [class*="chat-msg-"]');
+
+        userElements.forEach(el => {
+            const userClass = [...el.classList].find(c => c.startsWith('chat-msg-'));
+            if (!userClass) return;
+
+            const username = userClass.replace('chat-msg-', '');
+            const color = usernameToColor(username);
+
+            const nameSpan = el.querySelector('.username');
+            if (nameSpan) {
+                nameSpan.style.color = color;
+                nameSpan.style.fontWeight = "700";
+            }
+        });
+    }
+
+    function startUserColorObserver() {
+        const buffer = document.getElementById('messagebuffer');
+        if (!buffer) return false;
+
+        const chatObserver = new MutationObserver(() => {
+            applyUserColors();
+        });
+
+        chatObserver.observe(buffer, {
+            childList: true,
+            subtree: true
+        });
+
+        applyUserColors();
+        return true;
+    }
+
     /* ---------- DOM READY / OBSERVERS ---------- */
 
     const waitForBody = () => {
@@ -129,11 +190,20 @@
         applyInputMode();
         addFullscreenButton();
         applyEmotePickerIcon();
-
+        startUserColorObserver();
         const observer = new MutationObserver(() => {
             applyInputMode();
             addFullscreenButton();
             applyEmotePickerIcon();
+
+            if (!document.getElementById('tv-color-init')) {
+                if (startUserColorObserver()) {
+                    const flag = document.createElement('div');
+                    flag.id = 'tv-color-init';
+                    flag.style.display = 'none';
+                    document.body.appendChild(flag);
+                }
+            }
         });
 
         observer.observe(document.body, {
@@ -141,6 +211,8 @@
             subtree: true
         });
     };
+
+
 
     waitForBody();
 
