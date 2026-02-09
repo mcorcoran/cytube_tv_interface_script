@@ -61,7 +61,7 @@ GM_addStyle(`
                 z-index: 9999 !important;
                 background: rgba(0,0,0,0.7) !important;
                 overflow: hidden !important;
-                padding-right: 5px !important;
+                padding-right: 0px !important;
             }
 
             #messagebuffer {
@@ -191,6 +191,20 @@ GM_addStyle(`
         }
         body { background: #000 !important; overflow: hidden !important; }
     `);
+
+    const applyInputMode = () => {
+        const chatinput = document.getElementById("chatline");
+        if (chatinput && chatinput.getAttribute("inputmode") !== "none") {
+            chatinput.setAttribute("inputmode", "none");
+        }
+
+        const emoteInputs = document.getElementsByClassName("emotelist-search");
+        for (const input of emoteInputs) {
+            if (input.getAttribute("inputmode") !== "none") {
+                input.setAttribute("inputmode", "none");
+            }
+        }
+    };
 
     /* ---------- LOGIC ---------- */
 
@@ -375,6 +389,7 @@ GM_addStyle(`
 
     setInterval(() => {
         initSmartInput();
+        applyInputMode();
         startUserColorObserver();
         const emoteBtn = document.getElementById("emotelistbtn");
         if (emoteBtn) {
