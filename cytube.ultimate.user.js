@@ -2,7 +2,7 @@
 // @name         CyTube Ultimate Overlay with local LLM Correction
 // @description  Large number of UI improvments to help with watching on TV and grammar correction
 // @namespace    http://tampermonkey.net/
-// @version      3.6
+// @version      3.7
 // @match        https://cytu.be/r/420Grindhouse
 // @match        https://cytu.be/r/testing
 // @grant        GM_xmlhttpRequest
@@ -99,16 +99,7 @@
         body { background: #000 !important; overflow: hidden !important; }
     `);
 
-    const applyInputMode = () => {
-        const chatinput = document.getElementById("chatline");
-        if (chatinput && chatinput.getAttribute("inputmode") !== "none") {
-            chatinput.setAttribute("inputmode", "none");
-        }
-        const emoteInputs = document.getElementsByClassName("emotelist-search");
-        for (const input of emoteInputs) {
-            if (input.getAttribute("inputmode") !== "none") input.setAttribute("inputmode", "none");
-        }
-    };
+
 
     /* ---------- LOGIC ---------- */
 
@@ -274,32 +265,103 @@
         return true;
     }
 
+    // --- Button Updates ---
+    const applyInputMode = () => {
+        const chatinput = document.getElementById("chatline");
+        if (chatinput && chatinput.getAttribute("inputmode") !== "none") {
+            chatinput.setAttribute("inputmode", "none");
+        }
+        const emoteInputs = document.getElementsByClassName("emotelist-search");
+        for (const input of emoteInputs) {
+            if (input.getAttribute("inputmode") !== "none") input.setAttribute("inputmode", "none");
+        }
+    };
+
+   function toggleFullscreen() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => { });
+        } else {
+            document.documentElement.requestFullscreen().catch(() => { });
+        }
+    }
+
+    const updateFullscreenButtonVisibility = () => {
+        const fsBtn = document.getElementById("fs-toggle-btn");
+        if (!fsBtn) return;
+
+        fsBtn.style.display = document.fullscreenElement ? "none" : "";
+    };
+
+    document.addEventListener("fullscreenchange", updateFullscreenButtonVisibility);
+
+    const addFullscreenButton = () => {
+        const emoteBtn = document.getElementById("emotelistbtn");
+        if (!emoteBtn) return;
+
+        if (document.getElementById("fs-toggle-btn")) return;
+
+        const fsBtn = document.createElement("button");
+        fsBtn.id = "fs-toggle-btn";
+        fsBtn.textContent = "⛶";
+        fsBtn.title = "Toggle Fullscreen";
+
+        fsBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleFullscreen();
+        });
+
+        emoteBtn.parentElement.appendChild(fsBtn);
+        updateFullscreenButtonVisibility();
+    };
+
+    const applyEmotePickerIcon = () => {
+        const btn = document.getElementById("emotelistbtn");
+        if (!btn) return;
+
+        // Prevent reapplying if CyTube rebuilds DOM
+        if (btn.dataset.pickerApplied) return;
+
+        btn.textContent = "▦";
+        btn.title = "Emotes";
+        btn.setAttribute("aria-label", "Emote Picker");
+
+        btn.dataset.pickerApplied = "true";
+    };
     setInterval(() => {
         initSmartInput();
-        const emoteBtn = document.getElementById("emotelistbtn");
-        if (emoteBtn) {
-            if (!document.getElementById("fs-toggle-btn")) {
-                const fs = document.createElement("button");
-                fs.id = "fs-toggle-btn";
-                fs.textContent = "⛶";
-                fs.onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
-                emoteBtn.parentElement.appendChild(fs);
-            }
-            if (!emoteBtn.dataset.pickerApplied) {
-                emoteBtn.textContent = "▦";
-                emoteBtn.dataset.pickerApplied = "true";
-            }
-        }
     }, 1000);
 
     const waitForBody = () => {
+        if (!document.body) {
+            requestAnimationFrame(waitForBody);
+            return;
+        }
+
         applyInputMode();
+        addFullscreenButton();
+        applyEmotePickerIcon();
         startUserColorObserver();
         const observer = new MutationObserver(() => {
             applyInputMode();
-            startUserColorObserver();
+            addFullscreenButton();
+            applyEmotePickerIcon();
+
+            if (!document.getElementById('tv-color-init')) {
+                if (startUserColorObserver()) {
+                    const flag = document.createElement('div');
+                    flag.id = 'tv-color-init';
+                    flag.style.display = 'none';
+                    document.body.appendChild(flag);
+                }
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
         });
     };
 
+
     waitForBody();    
-})();
+})();``
