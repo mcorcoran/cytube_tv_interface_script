@@ -2,9 +2,9 @@
 // @name         CyTube Ultimate Overlay with local LLM Correction
 // @description  Large number of UI improvments to help with watching on TV and grammar correction
 // @namespace    http://tampermonkey.net/
-// @version      3.7
+// @version      3.8
 // @match        https://cytu.be/r/420Grindhouse
-// @match        https://cytu.be/r/testing
+// @match        https://cytu.be/r/test5
 // @grant        GM_xmlhttpRequest
 // @grant        GM_addStyle
 // @connect      192.168.1.44
@@ -161,6 +161,7 @@
         const textarea = document.createElement("textarea");
         textarea.id = "customChatArea";
         textarea.placeholder = "Message...";
+        textarea.setAttribute("inputmode", "none");
         const aiBtn = document.createElement("button");
         aiBtn.id = "ai-trigger-btn";
         aiBtn.innerHTML = "✨";
