@@ -21,10 +21,10 @@
     /* ---------- CSS / LAYOUT ---------- */
     GM_addStyle(`
         #videowrap { position: fixed !important; top: 0 !important; left: 0 !important; width: 80vw !important; height: 100vh !important; z-index: 9999 !important; background: black !important; }
-            #videowrap-header {
-                border: 0 !important;
-                opacity: 0.5 !important;
-            }
+        #videowrap-header {
+            border: 0 !important;
+            opacity: 0.5 !important;
+        }
         #videowrap .embed-responsive, #ytapiplayer { width: 80vw !important; height: 100vh !important;  }
         nav.navbar, #motdrow, #drinkbarwrap, #announcements, #playlistrow, #resizewrap, footer, #userlist, #userlisttoggle, #rightcontrols, .modal-header, .timestamp, .modal-footer,#resize-video-smaller,#resize-video-larger { display: none !important; }
 
@@ -38,7 +38,15 @@
         #messagebuffer { flex: 1 1 auto !important; height: 100% !important; background: transparent !important; color: white !important; font-size: 14px !important; overflow-y: auto !important; }
 
         #chatline { display: none !important; visibility: hidden !important; }
-
+        .video-js .vjs-control-bar {
+            bottom: 20px !important;
+            width: 80% !important;
+        }
+        .modal,
+        .popover,
+        .dropdown-menu {
+            z-index: 20001 !important;
+        }            
         /* FIXED: Added vertical padding buffer for Android TV */
         .smart-input-wrapper {
             flex: 0 0 auto !important;
@@ -46,7 +54,7 @@
             width: 100% !important;
             background: rgba(20,20,20,0.95) !important;
             border-top: 1px solid rgba(255,255,255,0.1) !important;
-            padding: 0px 0px 20px 0px !important; /* Bottom buffer for TV cut-off */
+            padding: 0px !important;
             box-sizing: border-box !important;
         }
 
@@ -124,7 +132,7 @@
             url: OLLAMA_URL,
             headers: { "Content-Type": "application/json" },
             data: JSON.stringify({
-                 "model": MODEL,
+                "model": MODEL,
                 "messages": [
                     { "role": "system", "content": "Correct spelling and grammar. Output ONLY corrected text." },
                     { "role": "user", "content": text }
@@ -268,16 +276,14 @@
 
     setInterval(() => {
         initSmartInput();
-        applyInputMode();
-        startUserColorObserver();
         const emoteBtn = document.getElementById("emotelistbtn");
         if (emoteBtn) {
             if (!document.getElementById("fs-toggle-btn")) {
-                 const fs = document.createElement("button");
-                 fs.id = "fs-toggle-btn";
-                 fs.textContent = "⛶";
-                 fs.onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
-                 emoteBtn.parentElement.appendChild(fs);
+                const fs = document.createElement("button");
+                fs.id = "fs-toggle-btn";
+                fs.textContent = "⛶";
+                fs.onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+                emoteBtn.parentElement.appendChild(fs);
             }
             if (!emoteBtn.dataset.pickerApplied) {
                 emoteBtn.textContent = "▦";
@@ -285,4 +291,15 @@
             }
         }
     }, 1000);
+
+    const waitForBody = () => {
+        applyInputMode();
+        startUserColorObserver();
+        const observer = new MutationObserver(() => {
+            applyInputMode();
+            startUserColorObserver();
+        });
+    };
+
+    waitForBody();    
 })();
