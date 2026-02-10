@@ -2,7 +2,7 @@
 // @name         CyTube Ultimate Overlay with local LLM Correction
 // @description  Large number of UI improvments to help with watching on TV and grammar correction
 // @namespace    http://tampermonkey.net/
-// @version      3.8
+// @version      3.9
 // @match        https://cytu.be/r/420Grindhouse
 // @match        https://cytu.be/r/test5
 // @grant        GM_xmlhttpRequest
@@ -26,7 +26,7 @@
             opacity: 0.5 !important;
         }
         #videowrap .embed-responsive, #ytapiplayer { width: 80vw !important; height: 100vh !important;  }
-        nav.navbar, #motdrow, #drinkbarwrap, #announcements, #playlistrow, #resizewrap, footer, #userlist, #userlisttoggle, #rightcontrols, .modal-header, .timestamp, .modal-footer,#resize-video-smaller,#resize-video-larger { display: none !important; }
+        #modflair, nav.navbar, #motdrow, #drinkbarwrap, #announcements, #playlistrow, #resizewrap, footer, #userlist, #userlisttoggle, #rightcontrols, .modal-header, .timestamp, .modal-footer,#resize-video-smaller,#resize-video-larger { display: none !important; }
 
         #chatwrap {
             position: fixed !important; top: 0 !important; right: 0 !important;
@@ -77,7 +77,7 @@
         #ai-trigger-btn {
             position: absolute;
             right: 20px;
-            top: 22px; /* Fixed position relative to top to avoid shift */
+            top: 5px; /* Fixed position relative to top to avoid shift */
             background: none; border: none; cursor: pointer;
             font-size: 18px; opacity: 0.6; z-index: 10001;
             transition: transform 0.3s ease;
@@ -125,7 +125,7 @@
             data: JSON.stringify({
                 "model": MODEL,
                 "messages": [
-                    { "role": "system", "content": "Correct spelling and grammar. Output ONLY corrected text." },
+                    { "role": "system", "content": "Correct spelling and grammar. Output ONLY the corrected text. No chat." },
                     { "role": "user", "content": text }
                 ],
                 "stream": false,
@@ -215,9 +215,12 @@
         const modalKeyHandler = (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
+                e.stopImmediatePropagation();
                 onAccept();
                 closeModal();
             } else if (e.key === "Escape") {
+                e.preventDefault();
+                e.stopImmediatePropagation(); // Stops browser from exiting fullscreen
                 closeModal();
             }
         };
