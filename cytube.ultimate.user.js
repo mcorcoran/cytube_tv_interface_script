@@ -35,7 +35,7 @@
             display: flex !important; flex-direction: column !important;
         }
 
-        #messagebuffer { flex: 1 1 auto !important; height: 100% !important; background: transparent !important; color: white !important; font-size: 14px !important; overflow-y: auto !important; }
+        #messagebuffer { flex: 1 1 auto !important; height: 100% !important; background: transparent !important; color: white !important; font-size: 14px !important; overflow-y: auto !important; padding-bottom: 5px !important; }
 
         #chatline { display: none !important; visibility: hidden !important; }
         .video-js .vjs-control-bar {
